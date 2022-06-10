@@ -277,7 +277,302 @@ php artisan make:resource PetitionCollection
 ## Create AuthorController, AuthorResource, AuthorCollection
 
 ```
-php artisan make:controller PetitionController --api --model=Petition
-php artisan make:resource PetitionResource
-php artisan make:resource PetitionCollection
+php artisan make:controller AuthorController --api --model=Author
+php artisan make:resource AuthorResource
+php artisan make:resource AuthorCollection
 ```
+
+Noted: Open AuthorController and Remove store, update, destroy
+
+## Define route in routes/api.php file
+
+```
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\PetitionController;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+Route::resource('/authors', AuthorController::class)->only(['index', 'show']);
+Route::apiResource('/petitions', PetitionController::class);
+
+```
+
+## Goto App/Http/Resource/PetitionResource.php
+
+```
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class PetitionResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'title' => ucwords($this->title),
+            'description' => $this->description,
+            'category' => $this->category,
+            'author' => $this->author,
+            'signees' => $this->signees
+        ];
+    }
+}
+
+```
+
+## Goto App/Http/Resource/PetitionCollection.php
+
+```
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\ResourceCollection;
+
+class PetitionCollection extends ResourceCollection
+{
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        return [
+            'data' => $this->collection,
+            'version' => '0.1.1',
+            'author'  => 'Nilsagor Technologies Ltd.'
+        ];
+    }
+}
+
+```
+
+## Goto App/Http/Resource/PetitionController.php
+
+```
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Resources\PetitionResource;
+use App\Http\Resources\PetitionCollection;
+use App\Models\Petition;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+class PetitionController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return PetitionCollection
+     */
+    public function index()
+    {
+        // return PetitionResource::collection(Petition::all()); // addisional data not show
+        // return new PetitionCollection(Petition::all());
+        return response()->json(
+            new PetitionCollection(Petition::all()),
+            Response::HTTP_OK
+        );
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return PetitionResource
+     */
+    public function store(Request $request)
+    {
+        $petition = Petition::create($request->only([
+            'title', 'description', 'category', 'author', 'signees'
+        ]));
+
+        return new PetitionResource($petition);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Petition  $petition
+     * @return PetitionResource
+     */
+    public function show(Petition $petition)
+    {
+        return new PetitionResource($petition);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Petition  $petition
+     * @return PetitionResource
+     */
+    public function update(Request $request, Petition $petition)
+    {
+        $petition->update($request->only([
+            'title', 'description', 'category', 'author', 'signees'
+        ]));
+
+        return new PetitionResource($petition);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Petition  $petition
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Petition $petition)
+    {
+        $petition->delete();
+
+        return response->json(null, Response::HTTP_NO_CONTENT);
+    }
+}
+
+```
+
+## Goto App/Http/Resource/AuthorResource.php
+
+```
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class AuthorResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'name' => ucwords($this->name)
+        ];
+    }
+}
+
+```
+
+## Goto App/Http/Resource/AuthorCollection.php
+
+```
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\ResourceCollection;
+
+class AuthorCollection extends ResourceCollection
+{
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        return [
+            'data'    => $this->collection,
+            'version' => '0.1.1',
+            'author'  => 'Nilsagor Technologies Ltd.'
+        ];
+    }
+}
+
+```
+
+## Goto App/Http/Resource/AuthorController.php
+
+```
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Resources\AuthorResource;
+use App\Http\Resources\AuthorCollection;
+use App\Models\Author;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+class AuthorController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        return response()->json(new AuthorCollection(Author::all()), Response::HTTP_OK);
+    }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Author  $author
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Author $author)
+    {
+        return new AuthorResource($author);
+    }
+    
+}
+
+```
+
+
+## Then run your application
+
+```
+php artisan serve
+```
+
+## Testing your api
+
+```
+http://127.0.0.1:8000/api/petitions
+http://127.0.0.1:8000/api/authors
+```
+
+
