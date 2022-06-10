@@ -14,6 +14,10 @@ class AuthorCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'data'    => $this->collection,
+            'version' => '0.1.1',
+            'author'  => 'Nilsagor Technologies Ltd.'
+        ];
     }
 }

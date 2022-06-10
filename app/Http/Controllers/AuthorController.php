@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AuthorResource;
+use App\Http\Resources\AuthorCollection;
 use App\Models\Author;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class AuthorController extends Controller
 {
@@ -14,7 +17,7 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(new AuthorCollection(Author::all()), Response::HTTP_OK);
     }
 
 
@@ -26,7 +29,7 @@ class AuthorController extends Controller
      */
     public function show(Author $author)
     {
-        //
+        return new AuthorResource($author);
     }
     
 }
