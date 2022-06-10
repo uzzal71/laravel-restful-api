@@ -9,5 +9,5 @@ class Petition extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'category' 'author', 'signees'];
+    protected $fillable = ['title', 'description', 'category', 'author', 'signees'];
 }

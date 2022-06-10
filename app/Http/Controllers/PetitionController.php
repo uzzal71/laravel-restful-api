@@ -12,7 +12,7 @@ class PetitionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return PetitionCollection
      */
     public function index()
     {
@@ -24,12 +24,12 @@ class PetitionController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return PetitionResource
      */
     public function store(Request $request)
     {
         $petition = Petition::create($request->only([
-            'title', 'description', 'category' 'author', 'signees'
+            'title', 'description', 'category', 'author', 'signees'
         ]));
 
         return new PetitionResource($petition);
@@ -39,11 +39,11 @@ class PetitionController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Petition  $petition
-     * @return \Illuminate\Http\Response
+     * @return PetitionResource
      */
     public function show(Petition $petition)
     {
-        //
+        return new PetitionResource($petition);
     }
 
     /**
