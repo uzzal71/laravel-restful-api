@@ -100,6 +100,13 @@ return new class extends Migration
 
 ```
 
+## Migrate project
+
+```
+php artisan migrate
+```
+Note: Make sure your database connection is ok, please change database in .env file
+
 ## Now open Petition model and changed
 
 ```
@@ -137,6 +144,120 @@ class Author extends Model
 }
 ```
 
+## Create DB Seed
+Goto database/factories/PetitionFactory.php
+
+```
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Petition>
+ */
+class PetitionFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition()
+    {
+        return [
+            'title' => $this->faker->word,
+            'category' => $this->faker->text(50),
+            'description' => $this->faker->text(200),
+            'author' => $this->faker->name,
+            'signees' => $this->faker->numberBetween(0, 100000)
+        ];
+    }
+}
+
+```
+
+Goto database/factories/AuthorFactory.php
+
+```
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Author>
+ */
+class AuthorFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->name
+        ];
+    }
+}
+
+```
+
+## Now define both factory files in seeders file
+
+Goto database/seeders/PetitionSeeder.php
+
+```
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class PetitionSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        \App\Models\Petition::factory()->times(50)->create();
+    }
+}
+
+```
+
+Goto database/seeders/AuthSeeder.php
+
+```
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class AuthorSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        \App\Models\Author::factory()->times(10)->create();
+    }
+}
+
+```
 
 ## Create PetitionController, PetitionResource, PetitionCollection
 
