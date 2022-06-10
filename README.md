@@ -259,6 +259,13 @@ class AuthorSeeder extends Seeder
 
 ```
 
+## Run db:seed
+
+```
+php artisan db:seed --class=PetitionSeeder
+php artisan db:seed --class=AuthorSeeder
+```
+
 ## Create PetitionController, PetitionResource, PetitionCollection
 
 ```
