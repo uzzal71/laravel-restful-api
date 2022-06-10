@@ -99,3 +99,57 @@ return new class extends Migration
 };
 
 ```
+
+## Now open Petition model and changed
+
+```
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Petition extends Model
+{
+    use HasFactory;
+
+    protected $fillable = ['title', 'description', 'category', 'author', 'signees'];
+}
+
+```
+
+## Now open Author model and changed
+
+```
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Author extends Model
+{
+    use HasFactory;
+
+    protected $fillable = ['name'];
+}
+```
+
+
+## Create PetitionController, PetitionResource, PetitionCollection
+
+```
+php artisan make:controller PetitionController --api --model=Petition
+php artisan make:resource PetitionResource
+php artisan make:resource PetitionCollection
+```
+
+## Create AuthorController, AuthorResource, AuthorCollection
+
+```
+php artisan make:controller PetitionController --api --model=Petition
+php artisan make:resource PetitionResource
+php artisan make:resource PetitionCollection
+```
