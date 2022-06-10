@@ -51,11 +51,15 @@ class PetitionController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Petition  $petition
-     * @return \Illuminate\Http\Response
+     * @return PetitionResource
      */
     public function update(Request $request, Petition $petition)
     {
-        //
+        $petition->update($request->only([
+            'title', 'description', 'category', 'author', 'signees'
+        ]));
+
+        return new PetitionResource($petition);
     }
 
     /**
