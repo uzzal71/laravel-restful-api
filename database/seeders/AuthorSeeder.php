@@ -14,6 +14,6 @@ class AuthorSeeder extends Seeder
      */
     public function run()
     {
-        //
+        \App\Models\Author::factory()->times(10);
     }
 }
